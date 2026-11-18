@@ -18,7 +18,8 @@ export default function WarehousePage() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     alert(t("تم تسجيل الحركة", "حرکت ثبت شد"));
-    setProductName(""); setQuantity("");
+    setProductName("");
+    setQuantity("");
   };
 
   return (
@@ -46,7 +47,9 @@ export default function WarehousePage() {
               <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-full border rounded-xl px-4 py-2" required />
             </div>
           </div>
-          <button type="submit" className="bg-emerald-600 text-white px-6 py-2 rounded-xl">{t("تسجيل", "ثبت")}</button>
+          <button type="submit" className="bg-emerald-600 text-white px-6 py-2 rounded-xl">
+            {t("تسجيل", "ثبت")}
+          </button>
         </form>
       </div>
     </div>

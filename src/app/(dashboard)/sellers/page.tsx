@@ -2,48 +2,43 @@
 
 import { useEffect, useState } from "react";
 
-export default function SalesPage() {
+export default function SellersPage() {
   const [lang, setLang] = useState<"ar" | "fa">("ar");
-  const [customer, setCustomer] = useState("");
-  const [product, setProduct] = useState("");
-  const [quantity, setQuantity] = useState("1");
+  const [sellers, setSellers] = useState<any[]>([]);
+  const [name, setName] = useState("");
 
   useEffect(() => {
+    const s = localStorage.getItem("sellers");
+    if (s) setSellers(JSON.parse(s));
     const l = localStorage.getItem("lang") as "ar" | "fa" | null;
     if (l) setLang(l);
   }, []);
 
   const t = (ar: string, fa: string) => (lang === "ar" ? ar : fa);
 
-  const handleSave = (e: React.FormEvent) => {
+  const add = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t("تم حفظ الفاتورة", "فاکتور ذخیره شد"));
-    setCustomer(""); setProduct(""); setQuantity("1");
+    if (!name) return;
+    const updated = [{ id: Date.now().toString(), name }, ...sellers];
+    setSellers(updated);
+    localStorage.setItem("sellers", JSON.stringify(updated));
+    setName("");
   };
 
   return (
     <div className="max-w-3xl space-y-6">
-      <h2 className="text-2xl font-bold">{t("فواتير البيع", "فاکتور فروش")}</h2>
-
+      <h2 className="text-2xl font-bold">{t("البائعين", "فروشندگان")}</h2>
       <div className="bg-white p-6 rounded-2xl border">
-        <h3 className="font-semibold mb-4">{t("فاتورة جديدة", "فاکتور جدید")}</h3>
-        <form onSubmit={handleSave} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">{t("اسم العميل", "نام مشتری")}</label>
-            <input value={customer} onChange={e => setCustomer(e.target.value)} className="w-full border rounded-xl px-4 py-2" required />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm mb-1">{t("المنتج", "محصول")}</label>
-              <input value={product} onChange={e => setProduct(e.target.value)} className="w-full border rounded-xl px-4 py-2" required />
-            </div>
-            <div>
-              <label className="block text-sm mb-1">{t("الكمية", "تعداد")}</label>
-              <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-full border rounded-xl px-4 py-2" min="1" />
-            </div>
-          </div>
-          <button type="submit" className="bg-blue-700 text-white px-6 py-2 rounded-xl">{t("حفظ الفاتورة", "ذخیره فاکتور")}</button>
+        <form onSubmit={add} className="flex gap-3">
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={t("اسم البائع", "نام فروشنده")} className="flex-1 border rounded-xl px-4 py-2" required />
+          <button type="submit" className="bg-blue-700 text-white px-6 py-2 rounded-xl">{t("إضافة", "افزودن")}</button>
         </form>
+      </div>
+      <div className="bg-white rounded-2xl border">
+        <div className="p-4 border-b font-semibold">{t("القائمة", "لیست")} ({sellers.length})</div>
+        {sellers.length === 0 ? <div className="p-10 text-center text-slate-400">{t("لا يوجد بائعين", "فروشنده‌ای نیست")}</div> : (
+          <div className="divide-y">{sellers.map(s => <div key={s.id} className="p-4 font-medium">{s.name}</div>)}</div>
+        )}
       </div>
     </div>
   );

@@ -37,11 +37,21 @@ export default function ProductsPage() {
         <form onSubmit={addProduct} className="space-y-4">
           <div>
             <label className="block text-sm mb-1">{t("اسم المنتج", "نام محصول")}</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} className="w-full border rounded-xl px-4 py-2" required />
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border rounded-xl px-4 py-2"
+              required
+            />
           </div>
           <div>
             <label className="block text-sm mb-1">{t("سعر البيع", "قیمت فروش")}</label>
-            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border rounded-xl px-4 py-2" />
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full border rounded-xl px-4 py-2"
+            />
           </div>
           <button type="submit" className="bg-blue-700 text-white px-6 py-2 rounded-xl">
             {t("إضافة", "افزودن")}
@@ -54,7 +64,9 @@ export default function ProductsPage() {
           {t("قائمة المنتجات", "لیست محصولات")} ({products.length})
         </div>
         {products.length === 0 ? (
-          <div className="p-10 text-center text-slate-400">{t("لا توجد منتجات بعد", "هنوز محصولی وجود ندارد")}</div>
+          <div className="p-10 text-center text-slate-400">
+            {t("لا توجد منتجات بعد", "هنوز محصولی وجود ندارد")}
+          </div>
         ) : (
           <div className="divide-y">
             {products.map((p) => (
