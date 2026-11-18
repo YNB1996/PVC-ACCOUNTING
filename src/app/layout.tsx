@@ -1,3 +1,17 @@
+@@ -1,21 +1,99 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "نظام محاسبة المصنع | سیستم حسابداری کارخانه",
+  description: "نظام محاسبة متكامل لمصنع التصنيع - عربي / فارسي",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [lang, setLang] = useState<"ar" | "fa">("ar");
-  const [open, setOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const u = localStorage.getItem("user");
@@ -42,43 +56,63 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     window.location.reload();
   };
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center">...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center">جاري التحميل...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50" dir="rtl">
-      <header className="bg-white border-b h-14 flex items-center justify-between px-4 sticky top-0 z-20">
-        <button onClick={() => setOpen(!open)} className="text-2xl px-2">☰</button>
-        <span className="font-semibold">{lang === "ar" ? "نظام المحاسبة" : "سیستم حسابداری"}</span>
-        <div className="flex gap-1 bg-slate-100 rounded-lg p-1 text-sm">
-          <button onClick={() => changeLang("ar")} className={`px-3 py-1 rounded ${lang === "ar" ? "bg-white shadow" : ""}`}>عربي</button>
-          <button onClick={() => changeLang("fa")} className={`px-3 py-1 rounded ${lang === "fa" ? "bg-white shadow" : ""}`}>فارسی</button>
-        </div>
-      </header>
+    <html lang="ar" dir="rtl" className="h-full">
+      <body className="min-h-full bg-[var(--background)] text-[var(--foreground)] antialiased">
+        {children}
+      </body>
+    </html>
+    <div className="min-h-screen flex bg-slate-50" dir="rtl">
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
 
-      {open && <div className="fixed inset-0 bg-black/40 z-30" onClick={() => setOpen(false)} />}
-
-      <aside className={`fixed top-14 bottom-0 w-64 bg-slate-900 text-white z-40 overflow-y-auto transition-all ${open ? "right-0" : "-right-64"}`}>
+      <aside className={`w-64 bg-slate-900 text-white flex flex-col fixed h-full z-50 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "translate-x-full"} md:translate-x-0`}>
         <div className="p-4 border-b border-slate-700 flex items-center gap-2">
-          <img src="/logo.png" alt="" className="h-8" />
-          <span className="font-bold">Anadolu Afghan</span>
+          <img src="/logo.png" alt="Logo" className="h-10" />
+          <span className="text-lg font-bold">Anadolu Afghan</span>
         </div>
-        <nav className="p-2">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {menu.filter(m => m.roles.includes(user.role)).map(item => (
-            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg mb-1 text-sm ${pathname === item.href ? "bg-blue-600" : "hover:bg-slate-800"}`}>
+            <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${pathname === item.href ? "bg-blue-600" : "hover:bg-slate-800"}`}>
               <span>{item.icon}</span>
               <span>{lang === "ar" ? item.ar : item.fa}</span>
             </Link>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-700 mt-4">
+        <div className="p-4 border-t border-slate-700">
           <div className="text-sm mb-2">{user.name}</div>
           <button onClick={() => { localStorage.removeItem("user"); router.push("/login"); }}
-            className="w-full bg-red-600 py-2 rounded-lg text-sm">خروج</button>
+            className="w-full bg-red-600 py-2 rounded-lg text-sm">
+            {lang === "ar" ? "تسجيل الخروج" : "خروج"}
+          </button>
         </div>
       </aside>
 
-      <main className="p-4">{children}</main>
+      <div className="flex-1 md:mr-64">
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 sticky top-0 z-10">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-2 text-slate-600 text-xl">
+            ☰
+          </button>
+          <h1 className="font-semibold text-lg">
+            {lang === "ar" ? "نظام محاسبة المصنع" : "سیستم حسابداری کارخانه"}
+          </h1>
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+            <button onClick={() => changeLang("ar")}
+              className={`px-3 py-1.5 rounded-md text-sm ${lang === "ar" ? "bg-white shadow font-medium" : ""}`}>
+              عربي
+            </button>
+            <button onClick={() => changeLang("fa")}
+              className={`px-3 py-1.5 rounded-md text-sm ${lang === "fa" ? "bg-white shadow font-medium" : ""}`}>
+              فارسی
+            </button>
+          </div>
+        </header>
+        <div className="p-4 md:p-6">{children}</div>
+      </div>
     </div>
   );
 }
