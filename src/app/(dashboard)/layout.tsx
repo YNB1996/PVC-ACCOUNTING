@@ -47,7 +47,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen flex bg-slate-50" dir="rtl">
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full">
-        <div className="p-4 text-xl font-bold border-b border-slate-700">BVC Factory</div>
+        <div className="p-4 border-b border-slate-700 flex items-center gap-2">
+  <img src="/logo.png" alt="Logo" className="h-10" />
+  <span className="text-lg font-bold">Anadolu Afghan</span>
+</div>
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {menu.filter(m => m.roles.includes(user.role)).map(item => (
             <Link key={item.href} href={item.href}
