@@ -26,6 +26,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [lang, setLang] = useState<"ar" | "fa">("ar");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const u = localStorage.getItem("user");
@@ -45,15 +46,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen flex bg-slate-50" dir="rtl">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full">
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <aside className={`w-64 bg-slate-900 text-white flex flex-col fixed h-full z-50 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "translate-x-full"} md:translate-x-0`}>
         <div className="p-4 border-b border-slate-700 flex items-center gap-2">
-  <img src="/logo.png" alt="Logo" className="h-10" />
-  <span className="text-lg font-bold">Anadolu Afghan</span>
-</div>
+          <img src="/logo.png" alt="Logo" className="h-10" />
+          <span className="text-lg font-bold">Anadolu Afghan</span>
+        </div>
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {menu.filter(m => m.roles.includes(user.role)).map(item => (
-            <Link key={item.href} href={item.href}
+            <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${pathname === item.href ? "bg-blue-600" : "hover:bg-slate-800"}`}>
               <span>{item.icon}</span>
               <span>{lang === "ar" ? item.ar : item.fa}</span>
@@ -69,24 +73,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 mr-64">
-        <header className="h-16 bg-white border-b flex items-center justify-between px-6 sticky top-0 z-10">
+      <div className="flex-1 md:mr-64">
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 sticky top-0 z-10">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden p-2 text-slate-600 text-xl">
+            ☰
+          </button>
           <h1 className="font-semibold text-lg">
             {lang === "ar" ? "نظام محاسبة المصنع" : "سیستم حسابداری کارخانه"}
           </h1>
           <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
             <button onClick={() => changeLang("ar")}
-              className={`px-4 py-1.5 rounded-md text-sm ${lang === "ar" ? "bg-white shadow font-medium" : ""}`}>
+              className={`px-3 py-1.5 rounded-md text-sm ${lang === "ar" ? "bg-white shadow font-medium" : ""}`}>
               عربي
             </button>
             <button onClick={() => changeLang("fa")}
-              className={`px-4 py-1.5 rounded-md text-sm ${lang === "fa" ? "bg-white shadow font-medium" : ""}`}>
+              className={`px-3 py-1.5 rounded-md text-sm ${lang === "fa" ? "bg-white shadow font-medium" : ""}`}>
               فارسی
             </button>
           </div>
         </header>
-        <div className="p-6">{children}</div>
+        <div className="p-4 md:p-6">{children}</div>
       </div>
     </div>
   );
